@@ -1,0 +1,78 @@
+schema_version: 1
+
+context:
+  name: fastbdt
+  version: "5.4"
+  build_number: 0
+
+recipe:
+  name: ${{ name }}-suite
+  version: ${{ version }}
+
+source:
+  # Replace with upstream release tarball for conda-forge
+  url: https://github.com/belle2/FastBDT/archive/refs/tags/v${{ version }}.tar.gz
+  sha256: 4607ea53b991e6e46652fd07bc2ef175944f2a30d851c16a9d68e0bb35578ef1
+
+build:
+  skip:
+    - win
+    - osx_arm64
+    - linux_aarch64
+    - linux_ppc64le
+  number: ${{ build_number }}
+
+outputs:
+  - package:
+      name: ${{ name }}
+
+    build:
+      script:
+        - cmake ${CMAKE_ARGS} -G Ninja -S . -B build -DBUILD_TESTING=OFF -DUSE_DOUBLE_WEIGHT=ON
+        - cmake --build build --parallel
+        - cmake --install build
+
+    requirements:
+      build:
+        - ${{ compiler('cxx') }}
+        - cmake
+        - ninja
+      host:
+        - python
+        - pip
+        - setuptools
+        - wheel
+        - numpy
+      run:
+        - python
+        - numpy >=1.20
+
+    tests:
+      - python:
+          imports:
+            - PyFastBDT
+          pip_check: true
+
+      - package_contents:
+          include:
+            - FastBDT.h
+            - Classifier.h
+            - FastBDT_IO.h
+          files:
+            - lib/libFastBDT_static.a
+            - lib/libFastBDT_shared.so
+            - lib/libFastBDT_CInterface.so
+
+about:
+  summary: "FastBDT: Stochastic gradient-boosted decision trees for multivariate classification, usable standalone and via Python interface"
+  license: GPL-3.0-or-later
+  license_file: LICENSE
+  homepage: https://github.com/belle2/FastBDT
+  repository: https://github.com/belle2/FastBDT
+
+extra:
+  feedstock-name: fastbdt
+  recipe-maintainers:
+    - GiacomoXT
+    - vvsagar
+    - AlexanderHeidelbach
