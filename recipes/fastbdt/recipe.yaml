@@ -2,7 +2,7 @@ schema_version: 1
 
 context:
   name: fastbdt
-  version: "5.4"
+  version: "5.6"
   build_number: 0
 
 recipe:
@@ -17,9 +17,6 @@ source:
 build:
   skip:
     - win
-    - osx_arm64
-    - linux_aarch64
-    - linux_ppc64le
   number: ${{ build_number }}
 
 outputs:
@@ -33,7 +30,7 @@ outputs:
         use_keys:
           - use_double_weight
       script:
-        - cmake ${CMAKE_ARGS} -G Ninja -S . -B build -DBUILD_TESTING=OFF -DUSE_DOUBLE_WEIGHT=${{ use_double_weight }}
+        - cmake ${CMAKE_ARGS} -S . -B build -DBUILD_TESTING=OFF -DUSE_DOUBLE_WEIGHT=${{ use_double_weight }}
         - cmake --build build --parallel
         - cmake --install build
 
@@ -41,7 +38,6 @@ outputs:
       build:
         - ${{ compiler('cxx') }}
         - cmake
-        - ninja
       host:
         - python
         - pip
@@ -65,8 +61,14 @@ outputs:
             - FastBDT_IO.h
           files:
             - lib/libFastBDT_static.a
-            - lib/libFastBDT_shared.so
-            - lib/libFastBDT_CInterface.so
+            - if: linux
+              then:
+                - lib/libFastBDT_shared.so
+                - lib/libFastBDT_CInterface.so
+            - if: osx
+              then:
+                - lib/libFastBDT_shared.dylib
+                - lib/libFastBDT_CInterface.dylib
 
 about:
   summary: "FastBDT: Stochastic gradient-boosted decision trees for multivariate classification, usable standalone and via Python interface"
