@@ -27,8 +27,13 @@ outputs:
       name: ${{ name }}
 
     build:
+      number: ${{ build_number }}
+      string: double_weight_${{ use_double_weight|lower }}_${{ hash }}_${{ build_number }}
+      variant:
+        use_keys:
+          - use_double_weight
       script:
-        - cmake ${CMAKE_ARGS} -G Ninja -S . -B build -DBUILD_TESTING=OFF -DUSE_DOUBLE_WEIGHT=ON
+        - cmake ${CMAKE_ARGS} -G Ninja -S . -B build -DBUILD_TESTING=OFF -DUSE_DOUBLE_WEIGHT=${{ use_double_weight }}
         - cmake --build build --parallel
         - cmake --install build
 
