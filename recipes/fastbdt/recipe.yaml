@@ -12,7 +12,7 @@ recipe:
 source:
   # Replace with upstream release tarball for conda-forge
   url: https://github.com/belle2/FastBDT/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 4607ea53b991e6e46652fd07bc2ef175944f2a30d851c16a9d68e0bb35578ef1
+  sha256: 644ef4d4044cef4272d976ad85e8efb56e51fc485d19eb8aa9a3115e90f1ff11
 
 build:
   skip:
